@@ -1,68 +1,55 @@
 function LiriInit() {
 	this.fs = require('fs');
-	this.twitter = require('twitter');
-	this.spotify = require('spotify');
-	this.request = require('request');
-
-	this.commands = ['my-tweets','spotify-this-song','movie-this', 'do-what-it-says'];
-
+	this.apis = ['Spotify','Twetter','IMDB-Movies','Chose For Me'];
 }
 
 ////////////////// Prototypes ////////////////////
 
-
-LiriInit.prototype.twitterGetClient =function (key) {
-	var client =  new this.twitter({
-		consumer_key: key.twitterKeys.consumer_key,
-		consumer_secret: key.twitterKeys.consumer_secret,
-		access_token_key: key.twitterKeys.access_token_key,
-		access_token_secret: key.twitterKeys.access_token_secret
-	});
-	return client;
-};
 //-----------------------------------------------
 LiriInit.prototype.twitterGetTweets = function () {
-	var client = this.twitterGetClient(require('./keys.js'));
+	var Twitter = require('twitter');
+	var client =  new Twitter(require('./keys').twitterKeys);
 
-	var params = {
-		screen_name: 'user'
-	};
 
 	var params = {screen_name: 'Flavio Martins'};
 
 	client.get('statuses/user_timeline', params, function(err, tweets, response) {
+		console.log('===================== My Tweets =============================\n');
 		if (err) {
 			console.log('Error occurred: ' + err);
 			return;
 		} else {
 			tweets.forEach(function (tweet, index) {
-				console.log('Tweet# ' + parseInt(index + 1) + ': ' + tweet.text);
+				console.log('Created At: ' + tweet.created_at);
+				console.log('  Tweet# ' + parseInt(index + 1) + ': ' + tweet.text + '\n' );
 			});
 		}
-		console.log('===================');
+		console.log('============================================================\n');
 	}.bind(this));
 
 };
 //-----------------------------------------------
-LiriInit.prototype.spotfyGet = function (input) {
+LiriInit.prototype.spotifyGet = function (input) {
+	var spotify = require('spotify');
+
 	var params = {
 		type: 'track',
 		query: input,
 		limit: 1
 	};
 
-	this.spotify.search(params, function(err, data) {
+	spotify.search(params, function(err, data) {
 		if (err) {
 			console.log('Error occurred: ' + err);
 			return;
 		} else {
-			var obj = data.tracks.items;
-
-			console.log(obj["0"].name);
-			console.log(obj["0"].artists["0"].name);
-			console.log(obj["0"].preview_url);
-			console.log(obj["0"].album.name);
-			console.log('============================');
+			var track = data.tracks.items;
+			console.log('===================== Spotify =============================\n');
+			console.log('      Artist(s): ' + track['0'].artists['0'].name);
+			console.log('The song\'s Name: ' + track['0'].name);
+			console.log('   Spotify Link: ' + track['0'].preview_url);
+			console.log('          Album: ' + track['0'].album.name + '\n');
+			console.log('===========================================================\n');
 			//console.log(JSON.stringify(obj, null, 2));
 		}
 
@@ -70,30 +57,71 @@ LiriInit.prototype.spotfyGet = function (input) {
 };
 //-----------------------------------------------
 LiriInit.prototype.omdbGet = function (movieName) {
-	var request = 'http://www.omdbapi.com/?t='+movieName+'&plot=full';
+	var request = require('request');
+	var endpoint = 'http://www.omdbapi.com/?t='+movieName;
 
-	this.request(request, function (error, response, body) {
-		console.log('=========================');
-		console.log('error:', error); // Print the error if one occurred
-		console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-		console.log('body:', body); // Print the HTML for the Google homepage.
+	request(endpoint, function (err, response, body) {
+		console.log('===================== OMDB =============================\n');
+		if (err) {
+			console.log('Error occurred: ' + err);
+			return;
+		} else {
+			var movie = JSON.parse(body);
+			console.log('          Title: ' + movie.Title);
+			console.log('           Year:' + movie.Year);
+			console.log('        Country:' + movie.Country);
+			console.log('       Language: ' + movie.Language);
+			console.log('         Actors: ' + movie.Actors);
+			console.log('    IMDB Rating: ' + movie.imdbRating);
+			console.log('Rotten Tomatoes: ' + movie.Ratings["0"].Value);
+			console.log('           Plot: ' + movie.Plot + '\n');
+		}
+		console.log('===================== Spotify =============================\n');
 	});
 };
+//-----------------------------------------------
+LiriInit.prototype.apiChoser = function () {
+	var inquirer = require('inquirer');
 
+	inquirer.prompt([
+		{
+			type: 'list',
+			name: 'api',
+			message: 'Witch sevice do you like to use?',
+			choices: this.apis
+		}
+	]).then(function (anws) {
+		var comands = ['my-tweets','spotify-this-song','movie-this', ''];
 
+		switch (anws.api) {
+			case 'Spotify':
+				console.log('spotify-this-song');
+				break;
+			case 'Twetter':
+				console.log('my-tweets');
+				break;
+			case 'IMDB-Movies':
+				console.log('movie-this');
+				break;
+			default:
+				console.log('do-what-it-says');
+		}
+	});
 
-
-
-
-
-
+};
+//-----------------------------------------------
 
 
 
 var liri = new LiriInit();
 
-liri.twitterGetTweets();
+//liri.twitterGetTweets();
 
-liri.spotfyGet('velha infancia');
+//liri.spotifyGet('track','raimundos');
 
-liri.omdbGet('star wars');
+//liri.omdbGet('star wars');
+
+//liri.apiChoser();
+
+
+
