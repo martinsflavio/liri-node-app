@@ -233,7 +233,6 @@ LiriInit.prototype.stringSort = function (arr) {
 };
 
 
-
 var liri = new LiriInit();
 
 liri.apiChooser();
