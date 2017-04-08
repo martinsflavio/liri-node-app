@@ -1,10 +1,86 @@
 function LiriInit() {
 	this.fs = require('fs');
-	this.apis = ['Spotify','Twetter','IMDB-Movies','Chose For Me'];
+	this.inquirer = require('inquirer');
+
+	this.apis = ['Spotify','Twitter','OMDB-Movies','Chose For Me'];
+
 }
 
 ////////////////// Prototypes ////////////////////
+LiriInit.prototype.oneMoreSearch = function () {
+	this.inquirer.prompt([
+		{
+			type: 'confirm',
+			name: 'tryAgain',
+			message: 'Do you want to search again?',
+			default: true
+		}
+	]).then(function (anw) {
+		if (anw.tryAgain) {
+			this.apiChooser();
+		} else {
+			console.log('========================================================\n');
+			console.log('\n Thank\'s for choosing Liri! \n');
+			console.log('========================================================\n');
+		}
+	}.bind(this));
+};
+//-----------------------------------------------
+LiriInit.prototype.apiChooser = function () {
 
+	this.inquirer.prompt([
+		{
+			type: 'list',
+			name: 'api',
+			message: 'Witch sevice do you like to use?',
+			choices: this.apis
+		}
+	]).then(function (anws) {
+		var userChoice;
+		var message;
+
+		switch (anws.api) {
+			case 'Spotify':
+				userChoice = 'Spotify';
+				message = 'Enter the track name:';
+				break;
+			case 'Twitter':
+				this.twitterGetTweets();
+				break;
+			case 'OMDB-Movies':
+				userChoice = 'OMDB-Movies';
+				message = 'Enter the movie name:';
+				break;
+			case 'Chose For Me':
+				this.randomGet();
+		}
+
+		if(userChoice){
+			this.apiCaller(userChoice, message);
+		}
+	}.bind(this));
+
+};
+//-----------------------------------------------
+LiriInit.prototype.apiCaller = function (choice, message) {
+	this.inquirer.prompt([
+		{
+			type: 'input',
+			name: 'userInput',
+			message: message
+		}
+	]).then(function (dataSearch) {
+		switch (choice) {
+			case 'Spotify':
+				this.spotifyGet(dataSearch.userInput);
+				break;
+			case 'OMDB-Movies':
+				this.omdbGet(dataSearch.userInput);
+				break;
+		}
+
+	}.bind(this));
+};
 //-----------------------------------------------
 LiriInit.prototype.twitterGetTweets = function () {
 	var Twitter = require('twitter');
@@ -25,12 +101,18 @@ LiriInit.prototype.twitterGetTweets = function () {
 			});
 		}
 		console.log('============================================================\n');
+
+		this.oneMoreSearch();
 	}.bind(this));
 
 };
 //-----------------------------------------------
 LiriInit.prototype.spotifyGet = function (input) {
 	var spotify = require('spotify');
+
+	if (!input) {
+		input = 'The Sign by Ace of Base';
+	}
 
 	var params = {
 		type: 'track',
@@ -39,89 +121,110 @@ LiriInit.prototype.spotifyGet = function (input) {
 	};
 
 	spotify.search(params, function(err, data) {
-		if (err) {
+		var track = data.tracks.items;
+
+		if (track.total === 0) {
 			console.log('Error occurred: ' + err);
 			return;
 		} else {
-			var track = data.tracks.items;
 			console.log('===================== Spotify =============================\n');
 			console.log('      Artist(s): ' + track['0'].artists['0'].name);
 			console.log('The song\'s Name: ' + track['0'].name);
 			console.log('   Spotify Link: ' + track['0'].preview_url);
 			console.log('          Album: ' + track['0'].album.name + '\n');
 			console.log('===========================================================\n');
-			//console.log(JSON.stringify(obj, null, 2));
 		}
-
-	});
+		this.oneMoreSearch();
+	}.bind(this));
 };
 //-----------------------------------------------
 LiriInit.prototype.omdbGet = function (movieName) {
 	var request = require('request');
+	if (!movieName) {
+		movieName = 'Mr. Nobody';
+	}
+
 	var endpoint = 'http://www.omdbapi.com/?t='+movieName;
 
 	request(endpoint, function (err, response, body) {
+		var movie = JSON.parse(body);
+
 		console.log('===================== OMDB =============================\n');
-		if (err) {
-			console.log('Error occurred: ' + err);
-			return;
+		if (movie.Response === 'False') {
+			console.log( movieName + ' : Movie not founded!');
 		} else {
-			var movie = JSON.parse(body);
 			console.log('          Title: ' + movie.Title);
-			console.log('           Year:' + movie.Year);
-			console.log('        Country:' + movie.Country);
+			console.log('           Year: ' + movie.Year);
+			console.log('        Country: ' + movie.Country);
 			console.log('       Language: ' + movie.Language);
 			console.log('         Actors: ' + movie.Actors);
-			console.log('    IMDB Rating: ' + movie.imdbRating);
+			console.log('    OMDB Rating: ' + movie.imdbRating);
 			console.log('Rotten Tomatoes: ' + movie.Ratings["0"].Value);
 			console.log('           Plot: ' + movie.Plot + '\n');
 		}
-		console.log('===================== Spotify =============================\n');
-	});
+		console.log('========================================================\n');
+
+		this.oneMoreSearch();
+	}.bind(this));
 };
 //-----------------------------------------------
-LiriInit.prototype.apiChoser = function () {
-	var inquirer = require('inquirer');
+LiriInit.prototype.randomGet = function () {
+	this.fs.readFile('./random.txt', 'utf8', function (err, data) {
 
-	inquirer.prompt([
-		{
-			type: 'list',
-			name: 'api',
-			message: 'Witch sevice do you like to use?',
-			choices: this.apis
-		}
-	]).then(function (anws) {
-		var comands = ['my-tweets','spotify-this-song','movie-this', ''];
+		var randomApi = Math.floor(Math.random() * 3);
+		var possibilitiesObj = this.stringSort(data);
 
-		switch (anws.api) {
+		switch (this.apis[randomApi]) {
 			case 'Spotify':
-				console.log('spotify-this-song');
+				var randomItem = Math.floor(Math.random() * possibilitiesObj.spotify.length);
+				this.spotifyGet(possibilitiesObj.spotify[randomItem]);
 				break;
-			case 'Twetter':
-				console.log('my-tweets');
+			case 'Twitter':
+				this.twitterGetTweets();
 				break;
-			case 'IMDB-Movies':
-				console.log('movie-this');
+			case 'OMDB-Movies':
+				var randomItem = Math.floor(Math.random() * possibilitiesObj.omdb.length);
+				this.omdbGet(possibilitiesObj.omdb[randomItem]);
 				break;
-			default:
-				console.log('do-what-it-says');
-		}
-	});
 
+			}
+
+
+	}.bind(this));
 };
 //-----------------------------------------------
+
+
+
+LiriInit.prototype.stringSort = function (arr) {
+	var optArr = arr.split('\n');
+	var trackList;
+	var movieList;
+
+	//Split song's from movies and save in different arr
+	for (var i = 0; i < optArr.length; i ++) {
+		if(optArr[i] !== ''){
+			var test = optArr[i].split(':');
+			switch (test[0].toLowerCase()) {
+				case 'spotify':
+					trackList = test[1].split(',');
+					break;
+				case 'omdb':
+					movieList = test[1].split(',');
+					break;
+				default:
+			}
+		}
+	}
+	return {spotify: trackList, omdb: movieList};
+};
 
 
 
 var liri = new LiriInit();
 
-//liri.twitterGetTweets();
+liri.apiChooser();
 
-//liri.spotifyGet('track','raimundos');
-
-//liri.omdbGet('star wars');
-
-//liri.apiChoser();
 
 
 
