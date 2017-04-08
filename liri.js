@@ -3,11 +3,15 @@ function LiriInit() {
 	this.inquirer = require('inquirer');
 
 	this.apis = ['Spotify','Twitter','OMDB-Movies','Chose For Me'];
-
 }
 
 ////////////////// Prototypes ////////////////////
+LiriInit.prototype.clearScreen = function () {
+	console.log('\033c');
+};
+//-----------------------------------------------
 LiriInit.prototype.oneMoreSearch = function () {
+
 	this.inquirer.prompt([
 		{
 			type: 'confirm',
@@ -19,14 +23,16 @@ LiriInit.prototype.oneMoreSearch = function () {
 		if (anw.tryAgain) {
 			this.apiChooser();
 		} else {
+			this.clearScreen();
 			console.log('========================================================\n');
-			console.log('\n Thank\'s for choosing Liri! \n');
+			console.log('Thank\'s for choosing Liri! \n');
 			console.log('========================================================\n');
 		}
 	}.bind(this));
 };
 //-----------------------------------------------
 LiriInit.prototype.apiChooser = function () {
+this.clearScreen();
 
 	this.inquirer.prompt([
 		{
@@ -83,13 +89,16 @@ LiriInit.prototype.apiCaller = function (choice, message) {
 };
 //-----------------------------------------------
 LiriInit.prototype.twitterGetTweets = function () {
+	this.clearScreen();
+
 	var Twitter = require('twitter');
 	var client =  new Twitter(require('./keys').twitterKeys);
 
 
-	var params = {screen_name: 'Flavio Martins'};
+	var params = {screen_name: 'FlavioRMartins1'};
 
 	client.get('statuses/user_timeline', params, function(err, tweets, response) {
+
 		console.log('===================== My Tweets =============================\n');
 		if (err) {
 			console.log('Error occurred: ' + err);
@@ -108,6 +117,8 @@ LiriInit.prototype.twitterGetTweets = function () {
 };
 //-----------------------------------------------
 LiriInit.prototype.spotifyGet = function (input) {
+	this.clearScreen();
+
 	var spotify = require('spotify');
 
 	if (!input) {
@@ -123,9 +134,8 @@ LiriInit.prototype.spotifyGet = function (input) {
 	spotify.search(params, function(err, data) {
 		var track = data.tracks.items;
 
-		if (track.total === 0) {
-			console.log('Error occurred: ' + err);
-			return;
+		if (track.length === 0) {
+			console.log('Error occurred: Song not Founded!');
 		} else {
 			console.log('===================== Spotify =============================\n');
 			console.log('      Artist(s): ' + track['0'].artists['0'].name);
@@ -139,6 +149,8 @@ LiriInit.prototype.spotifyGet = function (input) {
 };
 //-----------------------------------------------
 LiriInit.prototype.omdbGet = function (movieName) {
+	this.clearScreen();
+
 	var request = require('request');
 	if (!movieName) {
 		movieName = 'Mr. Nobody';
@@ -151,7 +163,7 @@ LiriInit.prototype.omdbGet = function (movieName) {
 
 		console.log('===================== OMDB =============================\n');
 		if (movie.Response === 'False') {
-			console.log( movieName + ' : Movie not founded!');
+			console.log( movieName + ' : Movie not founded!\n');
 		} else {
 			console.log('          Title: ' + movie.Title);
 			console.log('           Year: ' + movie.Year);
@@ -159,7 +171,9 @@ LiriInit.prototype.omdbGet = function (movieName) {
 			console.log('       Language: ' + movie.Language);
 			console.log('         Actors: ' + movie.Actors);
 			console.log('    OMDB Rating: ' + movie.imdbRating);
-			console.log('Rotten Tomatoes: ' + movie.Ratings["0"].Value);
+			if(movie.Rating){
+				console.log('Rotten Tomatoes: ' + movie.Ratings["0"].Value);
+			}
 			console.log('           Plot: ' + movie.Plot + '\n');
 		}
 		console.log('========================================================\n');
@@ -169,6 +183,8 @@ LiriInit.prototype.omdbGet = function (movieName) {
 };
 //-----------------------------------------------
 LiriInit.prototype.randomGet = function () {
+	this.clearScreen();
+
 	this.fs.readFile('./random.txt', 'utf8', function (err, data) {
 
 		var randomApi = Math.floor(Math.random() * 3);
@@ -193,9 +209,6 @@ LiriInit.prototype.randomGet = function () {
 	}.bind(this));
 };
 //-----------------------------------------------
-
-
-
 LiriInit.prototype.stringSort = function (arr) {
 	var optArr = arr.split('\n');
 	var trackList;
@@ -224,7 +237,3 @@ LiriInit.prototype.stringSort = function (arr) {
 var liri = new LiriInit();
 
 liri.apiChooser();
-
-
-
-

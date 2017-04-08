@@ -1,0 +1,7 @@
+02:41:31.166 INFO  this is a simple info log statement/entry 
+02:41:31.166 WARN  this is a simple warn log statement/entry 
+02:41:31.166 ERROR this is a simple error log statement/entry 
+02:41:31.166 FATAL this is a simple fatal log statement/entry 
+02:41:31.166 INFO  set the level to all 
+02:41:31.166 TRACE this is a simple trace log statement (should show) 
+02:41:31.166 DEBUG this is a simple debug log statement (should show) 
