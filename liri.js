@@ -20,18 +20,24 @@ LiriInit.prototype.oneMoreSearch = function () {
 			default: true
 		}
 	]).then(function (anw) {
+		var output;
+
 		if (anw.tryAgain) {
-			this.apiChooser();
+			this.log('\n Do you want to search again:   True \n');
+			this.apiSelector();
 		} else {
 			this.clearScreen();
-			console.log('========================================================\n');
-			console.log('Thank\'s for choosing Liri! \n');
-			console.log('========================================================\n');
+			output =  '\n Do you want to search again:   False \n' +
+								'\n========================================================\n' +
+								' Thank\'s for choosing Liri! \n' +
+								'========================================================\n';
+			this.log(output);
+			console.log(output);
 		}
 	}.bind(this));
 };
 //-----------------------------------------------
-LiriInit.prototype.apiChooser = function () {
+LiriInit.prototype.apiSelector = function () {
 this.clearScreen();
 
 	this.inquirer.prompt([
@@ -61,6 +67,8 @@ this.clearScreen();
 				this.randomGet();
 		}
 
+		this.log('\n Option selected:  ' + anws.api + '\n');
+
 		if(userChoice){
 			this.apiCaller(userChoice, message);
 		}
@@ -85,6 +93,8 @@ LiriInit.prototype.apiCaller = function (choice, message) {
 				break;
 		}
 
+		this.log('\n ' + choice + ' search for:  ' + dataSearch.userInput + '\n');
+
 	}.bind(this));
 };
 //-----------------------------------------------
@@ -97,21 +107,25 @@ LiriInit.prototype.twitterGetTweets = function () {
 
 	var params = {screen_name: 'FlavioRMartins1'};
 
-	client.get('statuses/user_timeline', params, function(err, tweets, response) {
+	client.get('statuses/user_timeline', params, function(err, tweets) {
+		var output;
 
-		console.log('===================== My Tweets =============================\n');
+		output = '\n===================== My Tweets =============================\n';
 		if (err) {
-			console.log('Error occurred: ' + err);
+			output += 'Error occurred: ' + err;
 			return;
 		} else {
 			tweets.forEach(function (tweet, index) {
-				console.log('Created At: ' + tweet.created_at);
-				console.log('  Tweet# ' + parseInt(index + 1) + ': ' + tweet.text + '\n' );
+				output += '\n Created At: ' + tweet.created_at + '\n' +
+									'  Tweet# ' + parseInt(index + 1) + ': ' + tweet.text + '\n';
 			});
 		}
-		console.log('============================================================\n');
+		output += '\n============================================================\n';
 
+		console.log(output);
+		this.log(output);
 		this.oneMoreSearch();
+
 	}.bind(this));
 
 };
@@ -133,18 +147,23 @@ LiriInit.prototype.spotifyGet = function (input) {
 
 	spotify.search(params, function(err, data) {
 		var track = data.tracks.items;
+		var output;
 
 		if (track.length === 0) {
-			console.log('Error occurred: Song not Founded!');
+			output = 'Error occurred: Song not Founded!';
 		} else {
-			console.log('===================== Spotify =============================\n');
-			console.log('      Artist(s): ' + track['0'].artists['0'].name);
-			console.log('The song\'s Name: ' + track['0'].name);
-			console.log('   Spotify Link: ' + track['0'].preview_url);
-			console.log('          Album: ' + track['0'].album.name + '\n');
-			console.log('===========================================================\n');
+			output =  '\n===================== Spotify =============================\n' +
+								'      Artist(s): ' + track['0'].artists['0'].name + '\n' +
+								'The song\'s Name: ' + track['0'].name + '\n' +
+								'   Spotify Link: ' + track['0'].preview_url + '\n' +
+								'          Album: ' + track['0'].album.name + '\n' +
+								'===========================================================\n';
 		}
+
+		console.log(output);
+		this.log(output);
 		this.oneMoreSearch();
+
 	}.bind(this));
 };
 //-----------------------------------------------
@@ -160,25 +179,29 @@ LiriInit.prototype.omdbGet = function (movieName) {
 
 	request(endpoint, function (err, response, body) {
 		var movie = JSON.parse(body);
+		var output;
 
-		console.log('===================== OMDB =============================\n');
+		output = '\n===================== OMDB =============================\n';
 		if (movie.Response === 'False') {
-			console.log( movieName + ' : Movie not founded!\n');
+			output += movieName + ' : Movie not founded!\n';
 		} else {
-			console.log('          Title: ' + movie.Title);
-			console.log('           Year: ' + movie.Year);
-			console.log('        Country: ' + movie.Country);
-			console.log('       Language: ' + movie.Language);
-			console.log('         Actors: ' + movie.Actors);
-			console.log('    OMDB Rating: ' + movie.imdbRating);
+			output += '          Title: ' + movie.Title + '\n' +
+								'           Year: ' + movie.Year + '\n' +
+								'        Country: ' + movie.Country + '\n' +
+								'       Language: ' + movie.Language + '\n' +
+								'         Actors: ' + movie.Actors + '\n' +
+								'    OMDB Rating: ' + movie.imdbRating + '\n';
 			if(movie.Rating){
-				console.log('Rotten Tomatoes: ' + movie.Ratings["0"].Value);
+				output += 'Rotten Tomatoes: ' + movie.Ratings["0"].Value + '\n';
 			}
-			console.log('           Plot: ' + movie.Plot + '\n');
+			output +=	'           Plot: ' + movie.Plot + '\n';
 		}
-		console.log('========================================================\n');
+		output += '========================================================\n';
 
+		console.log(output);
+		this.log(output);
 		this.oneMoreSearch();
+
 	}.bind(this));
 };
 //-----------------------------------------------
@@ -186,25 +209,36 @@ LiriInit.prototype.randomGet = function () {
 	this.clearScreen();
 
 	this.fs.readFile('./random.txt', 'utf8', function (err, data) {
-
-		var randomApi = Math.floor(Math.random() * 3);
+		var randomApiIndex = Math.floor(Math.random() * 3);
 		var possibilitiesObj = this.stringSort(data);
+		var output = ' Api random selected:  ';
 
-		switch (this.apis[randomApi]) {
+
+		switch (this.apis[randomApiIndex]) {
 			case 'Spotify':
-				var randomItem = Math.floor(Math.random() * possibilitiesObj.spotify.length);
-				this.spotifyGet(possibilitiesObj.spotify[randomItem]);
+				var randomItemIndex = Math.floor(Math.random() * possibilitiesObj.spotify.length);
+
+				output += this.apis[randomApiIndex] + ' | Random search: ' + possibilitiesObj.spotify[randomItemIndex] + '\n';
+
+				this.spotifyGet(possibilitiesObj.spotify[randomItemIndex]);
 				break;
 			case 'Twitter':
 				this.twitterGetTweets();
+
+				output += this.apis[randomApiIndex] + '\n';
+
 				break;
 			case 'OMDB-Movies':
-				var randomItem = Math.floor(Math.random() * possibilitiesObj.omdb.length);
-				this.omdbGet(possibilitiesObj.omdb[randomItem]);
+				var randomItemIndex = Math.floor(Math.random() * possibilitiesObj.omdb.length);
+
+				output += this.apis[randomApiIndex] + ' | Random search: ' + possibilitiesObj.omdb[randomItemIndex] + '\n';
+
+				this.omdbGet(possibilitiesObj.omdb[randomItemIndex]);
 				break;
 
-			}
+		}
 
+		this.log(output);
 
 	}.bind(this));
 };
@@ -232,7 +266,13 @@ LiriInit.prototype.stringSort = function (arr) {
 	return {spotify: trackList, omdb: movieList};
 };
 
-
+LiriInit.prototype.log = function (string) {
+	this.fs.appendFile('./log.txt', string, function (err) {
+		if (err) {
+			console.log('Error occurred: ' + err);
+		}
+	});
+};
 var liri = new LiriInit();
 
-liri.apiChooser();
+liri.apiSelector();
