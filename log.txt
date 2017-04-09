@@ -1,0 +1,147 @@
+
+ Do you want to search again:   True 
+
+ Option selected:  OMDB-Movies
+
+ OMDB-Movies search for:  sdfsdfsdf
+
+===================== OMDB =============================
+sdfsdfsdf : Movie not founded!
+========================================================
+
+ Do you want to search again:   True 
+
+ Option selected:  Spotify
+
+ Spotify search for:  sdfsdfsdfsdf
+
+===================== Spotify =============================
+Error occurred: Song not Founded! 
+===========================================================
+
+ Do you want to search again:   True 
+
+ Option selected:  Spotify
+
+ Spotify search for:  I want to break free
+
+===================== Spotify =============================
+      Artist(s): Queen
+The song's Name: I Want To Break Free - Single Remix
+   Spotify Link: https://p.scdn.co/mp3-preview/1e2e959371f63d4bb9c2b72d951a1a855819dde1?cid=null
+          Album: The Works (Deluxe Remastered Version)
+===========================================================
+
+ Do you want to search again:   True 
+
+ Option selected:  Twitter
+
+===================== My Tweets =============================
+
+ Created At: Thu Apr 06 23:41:37 +0000 2017
+  Tweet# 1: testing my boot
+
+ Created At: Thu Sep 03 01:59:43 +0000 2015
+  Tweet# 2: #tovacinadob #JovemNerd
+
+ Created At: Wed May 16 07:06:13 +0000 2012
+  Tweet# 3: @PositivaFM um abraço a todos de Goiânia
+
+ Created At: Wed May 16 07:03:21 +0000 2012
+  Tweet# 4: Egua
+
+ Created At: Wed May 16 06:48:55 +0000 2012
+  Tweet# 5: @PositivaFM
+
+============================================================
+
+ Do you want to search again:   True 
+
+ Option selected:  OMDB-Movies
+
+ OMDB-Movies search for:  
+
+===================== OMDB =============================
+          Title: Mr. Nobody
+           Year: 2009
+        Country: Belgium, Germany, Canada, France
+       Language: English, Mohawk
+         Actors: Jared Leto, Sarah Polley, Diane Kruger, Linh Dan Pham
+    OMDB Rating: 7.9
+           Plot: A boy stands on a station platform as a train is about to leave. Should he go with his mother or stay with his father? Infinite possibilities arise from this decision. As long as he doesn't choose, anything is possible.
+========================================================
+
+ Do you want to search again:   True 
+
+ Option selected:  OMDB-Movies
+
+ OMDB-Movies search for:  star wars
+
+===================== OMDB =============================
+          Title: Star Wars: Episode IV - A New Hope
+           Year: 1977
+        Country: USA
+       Language: English
+         Actors: Mark Hamill, Harrison Ford, Carrie Fisher, Peter Cushing
+    OMDB Rating: 8.7
+           Plot: Luke Skywalker joins forces with a Jedi Knight, a cocky pilot, a wookiee and two droids to save the galaxy from the Empire's world-destroying battle-station, while also attempting to rescue Princess Leia from the evil Darth Vader.
+========================================================
+
+ Do you want to search again:   True 
+
+ Option selected:  Chose For Me
+ Api random selected:  Twitter
+
+===================== My Tweets =============================
+
+ Created At: Thu Apr 06 23:41:37 +0000 2017
+  Tweet# 1: testing my boot
+
+ Created At: Thu Sep 03 01:59:43 +0000 2015
+  Tweet# 2: #tovacinadob #JovemNerd
+
+ Created At: Wed May 16 07:06:13 +0000 2012
+  Tweet# 3: @PositivaFM um abraço a todos de Goiânia
+
+ Created At: Wed May 16 07:03:21 +0000 2012
+  Tweet# 4: Egua
+
+ Created At: Wed May 16 06:48:55 +0000 2012
+  Tweet# 5: @PositivaFM
+
+============================================================
+
+ Do you want to search again:   True 
+
+ Option selected:  Chose For Me
+ Api random selected:  Spotify
+ Random search: I Want it That Way
+
+===================== Spotify =============================
+      Artist(s): Backstreet Boys
+The song's Name: I Want It That Way
+   Spotify Link: https://p.scdn.co/mp3-preview/e72a05dc3f69c891e3390c3ceaa77fad02f6b5f6?cid=null
+          Album: The Hits--Chapter One
+===========================================================
+
+ Do you want to search again:   True 
+
+ Option selected:  Chose For Me
+ Api random selected:  OMDB-Movies
+ Random search: her
+
+===================== OMDB =============================
+          Title: Her
+           Year: 2013
+        Country: USA
+       Language: English
+         Actors: Joaquin Phoenix, Lynn Adrianna, Lisa Renee Pitts, Gabe Gomez
+    OMDB Rating: 8.0
+           Plot: A lonely writer develops an unlikely relationship with an operating system designed to meet his every need.
+========================================================
+
+ Do you want to search again:   False 
+
+========================================================
+ Thank's for choosing Liri! 
+========================================================

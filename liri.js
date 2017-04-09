@@ -112,7 +112,7 @@ LiriInit.prototype.twitterGetTweets = function () {
 
 		output = '\n===================== My Tweets =============================\n';
 		if (err) {
-			output += 'Error occurred: ' + err;
+			output += ' Error occurred: ' + err;
 			return;
 		} else {
 			tweets.forEach(function (tweet, index) {
@@ -147,19 +147,17 @@ LiriInit.prototype.spotifyGet = function (input) {
 
 	spotify.search(params, function(err, data) {
 		var track = data.tracks.items;
-		var output;
+		var output = '\n===================== Spotify =============================\n';
 
 		if (track.length === 0) {
-			output = 'Error occurred: Song not Founded!';
+			output += 'Error occurred: Song not Founded! \n';
 		} else {
-			output =  '\n===================== Spotify =============================\n' +
-								'      Artist(s): ' + track['0'].artists['0'].name + '\n' +
+			output +=  '      Artist(s): ' + track['0'].artists['0'].name + '\n' +
 								'The song\'s Name: ' + track['0'].name + '\n' +
 								'   Spotify Link: ' + track['0'].preview_url + '\n' +
-								'          Album: ' + track['0'].album.name + '\n' +
-								'===========================================================\n';
+								'          Album: ' + track['0'].album.name + '\n';
 		}
-
+		output += '===========================================================\n';
 		console.log(output);
 		this.log(output);
 		this.oneMoreSearch();
@@ -218,7 +216,8 @@ LiriInit.prototype.randomGet = function () {
 			case 'Spotify':
 				var randomItemIndex = Math.floor(Math.random() * possibilitiesObj.spotify.length);
 
-				output += this.apis[randomApiIndex] + ' | Random search: ' + possibilitiesObj.spotify[randomItemIndex] + '\n';
+				output += this.apis[randomApiIndex] +
+									'\n Random search: ' + possibilitiesObj.spotify[randomItemIndex] + '\n';
 
 				this.spotifyGet(possibilitiesObj.spotify[randomItemIndex]);
 				break;
@@ -231,7 +230,8 @@ LiriInit.prototype.randomGet = function () {
 			case 'OMDB-Movies':
 				var randomItemIndex = Math.floor(Math.random() * possibilitiesObj.omdb.length);
 
-				output += this.apis[randomApiIndex] + ' | Random search: ' + possibilitiesObj.omdb[randomItemIndex] + '\n';
+				output += this.apis[randomApiIndex] +
+									'\n Random search: ' + possibilitiesObj.omdb[randomItemIndex] + '\n';
 
 				this.omdbGet(possibilitiesObj.omdb[randomItemIndex]);
 				break;
@@ -273,6 +273,10 @@ LiriInit.prototype.log = function (string) {
 		}
 	});
 };
+
+
+
+
 var liri = new LiriInit();
 
 liri.apiSelector();
