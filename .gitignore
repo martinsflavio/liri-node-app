@@ -1,3 +1,6 @@
 .DS_Store
 node_modules
 .idea/*
+
+# You don't generally want to commit your log files to git
+log.txt

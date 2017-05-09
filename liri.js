@@ -101,6 +101,9 @@ LiriInit.prototype.apiCaller = function (choice, message) {
 LiriInit.prototype.twitterGetTweets = function () {
 	this.clearScreen();
 
+	// more of a code organization point, but you're already declaring some of your library dependencies 
+	// inside of the LiriInit function - it might make sense to do the same for your twitter client here as
+	// well as for your spotify and request libraries.
 	var Twitter = require('twitter');
 	var client =  new Twitter(require('./keys').twitterKeys);
 
@@ -113,15 +116,20 @@ LiriInit.prototype.twitterGetTweets = function () {
 		output = '\n===================== My Tweets =============================\n';
 		if (err) {
 			output += ' Error occurred: ' + err;
-			return;
+			// by having this return statement here you won't ever log out this error because the function will stop execution..
+			// return;
 		} else {
 			tweets.forEach(function (tweet, index) {
 				output += '\n Created At: ' + tweet.created_at + '\n' +
-									'  Tweet# ' + parseInt(index + 1) + ': ' + tweet.text + '\n';
+									// parseInt was unnecessary here. Since all you want to do is add the numbers together and display 
+									// that as a part of the string, you can simply put the addition operation in parentheses so
+									// it gets run before the string concatenation occurs.
+									'  Tweet# ' + (index + 1) + ': ' + tweet.text + '\n';
 			});
 		}
 		output += '\n============================================================\n';
 
+		// would be nice to have this console.log statement be included in the `.log` method since they're logically grouped actions.
 		console.log(output);
 		this.log(output);
 		this.oneMoreSearch();
@@ -135,6 +143,8 @@ LiriInit.prototype.spotifyGet = function (input) {
 
 	var spotify = require('spotify');
 
+	// a nice one-liner for defaulting values could also be:
+	// input = input || 'The Sign by Ace of Base';
 	if (!input) {
 		input = 'The Sign by Ace of Base';
 	}
@@ -150,9 +160,9 @@ LiriInit.prototype.spotifyGet = function (input) {
 		var output = '\n===================== Spotify =============================\n';
 
 		if (track.length === 0) {
-			output += 'Error occurred: Song not Founded! \n';
+			output += 'Error occurred: Song not Found! \n';
 		} else {
-			output +=  '      Artist(s): ' + track['0'].artists['0'].name + '\n' +
+			output +=  '      Artist(s): ' + track['0'].artists['0'].name + '\n' + // keep in mind that you can pass integers when accessing values by their index (eg. track[0] instead of track['0'])
 								'The song\'s Name: ' + track['0'].name + '\n' +
 								'   Spotify Link: ' + track['0'].preview_url + '\n' +
 								'          Album: ' + track['0'].album.name + '\n';
@@ -165,6 +175,8 @@ LiriInit.prototype.spotifyGet = function (input) {
 	}.bind(this));
 };
 //-----------------------------------------------
+// another way you can set defaults with es6 is inline within the function declaration
+// LiriInit.prototype.omdbGet = function (movieName = 'Mr. Nobody') {
 LiriInit.prototype.omdbGet = function (movieName) {
 	this.clearScreen();
 
@@ -181,7 +193,7 @@ LiriInit.prototype.omdbGet = function (movieName) {
 
 		output = '\n===================== OMDB =============================\n';
 		if (movie.Response === 'False') {
-			output += movieName + ' : Movie not founded!\n';
+			output += movieName + ' : Movie not found!\n';
 		} else {
 			output += '          Title: ' + movie.Title + '\n' +
 								'           Year: ' + movie.Year + '\n' +
@@ -235,6 +247,8 @@ LiriInit.prototype.randomGet = function () {
 
 				this.omdbGet(possibilitiesObj.omdb[randomItemIndex]);
 				break;
+				// I'd generally caution againast using switch statements, but if you are going to use them I would always
+				// have a default case for when the statement you're evaluating falls through all your cases.
 
 		}
 
